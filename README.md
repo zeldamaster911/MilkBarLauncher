@@ -1,7 +1,7 @@
 # Milk-Bar-Launcher
 This is the repository for Milk Bar Launcher. Here you can find all of the projects needed to build this project
 
-**There are four important folders in this project listed bellow:**
+**There are four important folders in this project listed below:**
 
 ## [C#](C%23)
 - This project contains the implementation for the server.
@@ -11,7 +11,7 @@ This is the repository for Milk Bar Launcher. Here you can find all of the proje
 ## [DLL](DLL/InjectDLL)
 - This project contains the implementation for the code that is injected into the emulator.
 - The solution is located at `DLL\InjectDLL\InjectDLL.sln`.
-- Most of the implementation is based on finding the memory address for important stuff and writing onto it.
+- Most of the implementation is based on finding important memory addresses to read and write the player information.
 - This project is implemented on C++ and uses NamedPipes to communicate with the front end application.
 
 ## [WPF .NET 6](WPF%20.NET%206/Breath%20of%20the%20Wild%20Multiplayer)
