@@ -11,6 +11,7 @@ This is the repository for Milk Bar Launcher. Here you can find all of the proje
 ## [DLL](DLL/InjectDLL)
 - This project contains the implementation for the code that is injected into the emulator.
 - The solution is located at `DLL\InjectDLL\InjectDLL.sln`.
+- The entrypoint for this project is located at `DLL\InjectDLL\dllmain.cpp`.
 - Most of the implementation is based on finding important memory addresses to read and write the player information.
 - This project is implemented on C++ and uses NamedPipes to communicate with the front end application.
 
