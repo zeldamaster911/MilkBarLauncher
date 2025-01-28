@@ -1684,25 +1684,33 @@ void Main::mainServerLoop()
 
         client->receiveBytes(&serverData[0]);
 
-        DTO::ServerDTO* serverResponse;
+        DTO::ServerDTO* serverResponse = nullptr; // Initialize to nullptr
 
         try
         {
-             serverResponse = Serialization::Serializer::DeserializeServerData(&serverData[0]);
+            serverResponse = Serialization::Serializer::DeserializeServerData(&serverData[0]);
         }
         catch (LPCWSTR ex)
         {
             MessageBoxW(NULL, ex, L"", MB_OK);
             Main::disconnectFromServer("Could not deserialize server data. Make sure that both the client and server versions match.");
+            continue; // Skip this iteration
+        }
+
+        // Check if serverResponse is null
+        if (serverResponse == nullptr)
+        {
+            Main::disconnectFromServer("Server response is null. Cannot proceed.");
+            continue; // Skip this iteration
         }
 
         ping = float(GetTickCount() - pingTimer) + 1;
 
-        if(!Game::GameInstance->IsGamePaused)
+        if (!Game::GameInstance->IsGamePaused)
             Memory::MultiplayerQuest::changeMQuestPing(static_cast<int>(ping));
 
         int timeToSleep = (1000 / serverResponse->NetworkData->SerializationRate) - ping;
-        
+
         if (timeToSleep > 0)
         {
             Sleep(timeToSleep);
@@ -1714,12 +1722,11 @@ void Main::mainServerLoop()
         if (!Helper::Vec3f_Operations::Equals(serverResponse->TeleportData->Destination, Vec3f(0, 0, 0)))
             Game::GameInstance->Teleport(serverResponse->TeleportData->Destination);
 
-        //TODO: Add set for world dto
-        if(!Game::GameInstance->IsGamePaused && Game::GameInstance->Location->LastKnown.Map != "CDungeon")
+        // TODO: Add set for world dto
+        if (!Game::GameInstance->IsGamePaused && Game::GameInstance->Location->LastKnown.Map != "CDungeon")
             Game::GameInstance->World->set(serverResponse->WorldData);
 
         // Death swap
-
         if ((serverResponse->DeathSwapData->Phase == 1) &&
             (playerNumber == 0 || playerNumber == 1) &&
             (float(GetTickCount() - LastDeathSwapNotif) / 1000 > 15))
@@ -1732,7 +1739,6 @@ void Main::mainServerLoop()
             Game::GameInstance->Teleport(serverResponse->DeathSwapData->Position);
 
         // Prop hunt
-
         switch (serverResponse->PropHuntData->Phase)
         {
         case 0:
@@ -1757,7 +1763,6 @@ void Main::mainServerLoop()
                 SendTimerMessage(false, "", 0, 0);
                 AddBigMessage("Game Over");
             }
-
             break;
         case 1:
             if (Game::GameInstance->propHuntFlags.HidingPhase->LastKnown == false)
@@ -1788,7 +1793,6 @@ void Main::mainServerLoop()
                     Instances::PlayerList[i]->DispName->set(false, __FUNCTION__);
                 }
             }
-
             break;
         case 2:
             if (Game::GameInstance->propHuntFlags.RunningPhase->LastKnown == false)
@@ -1806,7 +1810,6 @@ void Main::mainServerLoop()
                 AddBigMessage("Go get em Hunters!");
                 SendTimerMessage(true, "up", 0, 0);
             }
-
             break;
         case 3:
             if (Game::GameInstance->propHuntFlags.Countdown->LastKnown == false)
@@ -1891,6 +1894,7 @@ void Main::mainServerLoop()
         Game::GameInstance->QuestService->SetServerData(serverResponse->QuestData->Completed, Game::GameInstance->IsGamePaused, QuestSyncReady);
     }
 }
+
 
 void Main::Setup()
 {

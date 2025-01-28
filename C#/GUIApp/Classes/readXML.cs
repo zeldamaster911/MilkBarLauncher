@@ -255,7 +255,27 @@ namespace GUIApp
         }
 
 
-        static public void copyArmorMappings()
+        static public void copyArmor
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            pings()
         {
 
             //string folder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\BOTWM";
