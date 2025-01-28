@@ -111,39 +111,18 @@ namespace BOTWM.Server.ServerClasses
 
         static public void UpdatePlayerData(ClientPlayerDTO userData, int playerNumber)
         {
+
             userData.Equipment = ProcessArmors(userData.Equipment);
 
             //TODO: Implement animation mapping
 
             DataMutex.WaitOne(100);
-            Player player = PlayerList[playerNumber];
+            PlayerList[playerNumber].Update(userData);
 
-            // Ensure player.Location is not null before accessing player.Location.Map
-            byte? previousMap = null;
-            if (player.Location != null)
-            {
-                previousMap = player.Location.Map;  // Store the previous map location (nullable)
-            }
-
-            // If Location is null, set previousMap to a default value (e.g., 0)
-            if (previousMap == null)
-            {
-                previousMap = 0; // Set a default value if Map is null
-            }
-
-            player.Update(userData);
-
-            // Check if the map has changed after updating player data
-            if (player.Location != null && player.Location.Map != previousMap)
-            {
-                // Log the location change
-                Logger.LogInformation($"Player {player.Name} moved from map {previousMap} to map {player.Location.Map}");
-            }
-
-            foreach (List<bool> UpdatedList in Updated)
+            foreach(List<bool> UpdatedList in Updated)
                 UpdatedList[playerNumber] = true;
 
-            if (playerNumber == 0)
+            if(playerNumber == 0)
             {
                 if (Configuration.Settings.GameMode == Gamemode.DeathSwap && playerNumber == 0)
                 {
@@ -176,8 +155,6 @@ namespace BOTWM.Server.ServerClasses
 
             DataMutex.ReleaseMutex();
         }
-
-
 
         static public void UpdateEnemyData(EnemyDTO userData)
         {
